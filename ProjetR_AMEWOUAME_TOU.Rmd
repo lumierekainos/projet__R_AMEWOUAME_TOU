@@ -1,0 +1,868 @@
+---
+output:
+  pdf_document:
+    keep_tex: true
+    fig_caption: true
+    latex_engine: xelatex
+    highlight: pygments
+    toc: yes
+    toc_depth: 5
+fontsize : 12pt
+lineheight : 1.5
+title:
+ $\fontfamily{century}\textbf{Agence Nationale de Statistique et de la Démographie}$ 
+ \begin{center}\textbf{ANSD}\end{center}
+ **------------------------------------------------------------** \newline
+   $\fontfamily{century}\textbf{Ecole Nationale de la Statistique et de l'Analyse Economique}$
+  \begin{center}\textbf{ENSAE Pierre NDIAYE}\end{center}
+  **------------------------------------------------------------** \newline
+  
+  $\fontfamily{century}\selectfont\color{red}\textbf{Analyse de l'impact du Covid-19 sur les ménages et chocs et stratégies utiliséess}$ \newline
+  
+ **------------------------------------------------------------**
+  
+  \begin{flushleft}
+   Rédigé par :\newline
+   Elisée AMEWOUAME et Brahima TOU\newline
+   Elèves ingénieurs statisticiens \newline
+   économistes
+   \end{flushleft}
+   
+   \begin{flushright}
+   Sous la supervision de :\newline
+   Mouhamadou Hady DIALLO\newline
+   Ingénieur statisticien, Data Scientist\newline
+   \end{flushright}
+date: 
+  28 Juin 2022
+  \newpage
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+\newpage
+\begin{center}\color{red}{\textbf{REMERCIEMENTS}}\end{center}
+
+  Nos remerciements à l’administration, aux enseignants, à tous ceux qui luttent pour l’avancée de la Statistique et de l’informatique, à nos camarades de l’ENSAE-SENEGAL, ainsi qu’à tous ceux qui ont contribué de près ou de loin à la réalisation de ce document.
+  
+\begin{center}\color{red}{\textbf{AVANT-PROPOS}}\end{center}
+
+Créée en 2008, l’École Nationale de la Statistique et de l’Analyse Économique (ENSAE–Pierre NDIAYE) est une grande école de statistique à caractère sous-régional située à Dakar (capitale du Sénégal). Elle constitue une direction de l’Agence Nationale de la Statistique et de la Démographie (ANSD), qui est la structure principale du Système Statistique Nationale du Sénégal. L’ENSAE forme avec l’Institut Sous-régional de Statistique et d’Économie Appliquée (ISSEA-Yaoundé), l’École Nationale Supérieure de Statistique et d’Économie Appliquée (ENSEA-Abidjan) et l’École Nationale d’Économie Appliquée et de Management (ENEAM-Cotonou) le réseau des grandes écoles de statistiques africaines. Ces quatre écoles sont sous la coordination du Centre d’Appui aux Écoles de Statistiques Africaines (CAPESA) basé en France.
+
+  L’ENSAE a pour vocation de former et de mettre à la disposition de tous les pays africains des statisticiens et des économistes qualifiés. Ainsi, elle propose des formations qui se déroulent dans trois cycles à savoir les Analystes Statisticiens (AS), les Ingénieurs des Travaux Statistiques (ITS) et les Ingénieurs Statisticiens Economistes (ISE).
+  
+  Les élèves Ingénieurs Statisticiens Economistes qui suivent une formation de 05 ans, se doivent de faire le module \textcolor{blue}{"Logiciel R"} pour les apprendre à utiliser et à traiter les données statistiques avec ce logiciel.
+  C’est dans cette optique que s’inscrit notre rapport  dont le thème: \textcolor{blue}{Impacts socio-économiques de la Covid-19 sur les ménages} dont le but est d'analyser l'impact du COVID 19 sur les activités économiques,les conditions de travail des ménages bref les conditions de vie des menages.
+  
+# \color{red}{\textbf{Introduction}}
+
+ La pandémie de coronavirus (COVID-19) a eu des effets sanitaires et économiques dévastateurs à l'échelle mondiale en 2020, et ses effets se feront sentir probablement au-delà. Elle a eu et continuera d'avoir un impact majeur sur la santé et le bien-être de nombreux groupes vulnérables (OCDE, 2020b). Parmi ceux-ci, les femmes et les jeunes sont particulièrement affectées par les crises. En effet, les impacts des crises a considerablement bouleversés les activités economiques doc les acteurs principaux qui sont les jeunes et les femmes dans le monde.
+   
+   À l'instar d'autres pays, le Sénégal a été touché par la pandémie de Covid-19. Au 28 décembre 2020, 18728 cas ont été détectés dont 390 décès. Le taux de létalité se situe à 2,1%. Il est très en-dessous de celui Tchad (7,2%) mais au-dessus de celui observé au Burundi (0,2%). La région de Dakar concentre les
+deux tiers des cas détectés (COUS/MSAS, données Covid 19, 2020). Le Sénégal a pris des mesures afin de stopper la chaine de transmission du virus. Une première série de mesures a été prise afin de lutter contre la pandémie. 
+
+   Pour faire face aux cas dits importés, la compagnie Air Sénégal avait annulé ses vols régionaux et internationaux dès le 20 mars. De même, les mesures suivantes avaient été prises par les décideurs le 14 mars 2020 : fermeture des écoles, interdiction des manifestations publiques, annulation des manifestations prévues pour les 60 ans de l'indépendance du pays. Le 23 mars 2020, un état d'urgence est décrété sur toute l'étendue du territoire pour la tranche horaire 20h00-6h00. Cet état d'urgence est prolongé le 4 avril pour une durée de 30 jours puis jusqu'au 2 juin 2020. Le port obligatoire de masque dans les services publics et privés, les commerces et les transports est décidé le 19 avril 2020. Une
+deuxième série a été prise le 11 mai 2020 visant à assouplir les conditions de l’état d’urgence et qui consistait en un réaménagement des horaires du couvre-feu de 21 heures à 5 heures du matin, une réouverture des marchés urbains, des marchés hebdomadaires et des lieux de culte dans le respect des
+mesures de distanciation.
+
+  Le 4 juin, la durée du couvre-feu fait l’objet d’un nouvel assouplissement et est désormais fixée entre 23 heures et 5 heures du matin et l’interdiction du transport interurbain levée. L'objectif général de ces mesures était de limiter la propagation du virus et de contenir le nombre de personnes malades, afin
+de ne pas mettre à mal les structures de santé du pays. Ces mesures ont eu pour effet de réduire la durée du travail, la mobilité des individus et de ralentir les flux de transactions et donc le rythme de l‘activité économique.
+
+   L’objectif de ce travail est d’évaluer l’impact du Covid-19 sur les menages sénégalais afin d'indentifier les politiques adaptées pour venir en aide de cette population longtemps endurée par la crise sanitaire.Pour se faire, nous utiliserons les données de l'enquete EHCVM(2022)réalisé par l'ANSD pour analyser les conditions de vie des menages au moment de da pandemie et l'après.
+\newpage
+
+
+#  \color{red}{\textbf{I- Apurement des bases}}
+
+Dans cette partie, nous allons apurer la base en vue de la préparer aux divers analyses.Elle consistera principalement à visualiser la baser,à renommer certaines variables pour qu'elles soient comprehensibles,à detecter les valeurs manquantes et les imputer si neccessaires.
+
+## \color{red}{\textbf{1- Section 14a}}
+
+Nous importons la base section14a qui traite entre autres de l'impact socio-économique du covid-19 sur les ménages.
+
+```{r}
+# Installation des bibliothèques utiles
+
+library(haven)
+library(tidyverse)
+library(nycflights13)
+library(expss)
+library(visdat)
+library(dplyr)
+library(questionr)
+library(labelled)
+
+#Importation de la base
+
+section14a <- read_dta("C:\\Users\\DELL\\Documents\\ENSAE\\Cours ISEP 2\\Semestre 2\\Programmation avec R\\Projet_R\\Bases_données\\s14a_me_SEN_2021.dta")
+
+
+#Visionnage de la base
+head(section14a)
+dim(section14a)
+
+```
+
+La base section14a  contient 23523 observations pour 22 variables que nous allons renommer avant d'en choisir les plus utiles.
+
+###  \color{red}{\textbf{Renommons les variables}}
+
+```{r}
+new_name <- c(colnames(section14a)[1], colnames(section14a)[2],colnames(section14a)[3],
+              colnames(section14a)[4], 'repondant', colnames(section14a)[6], 'event',
+              'event_occur', 'nbr_pers', 'solution', 'event_time', colnames(section14a)[12],
+              'menage_member', 'num_ordre', 'sexe', 'age', 'relationship',
+              'resultat_interview', 'motif','langue','quiz_result', 'obs')
+
+isTRUE(length(new_name)==length(colnames(section14a))) #Vérifie si les longueurs sont les mêmes
+
+colnames(section14a) <- new_name
+colnames(section14a)
+```
+
+Ainsi,nous avons renommer toutes les variables de la base afin de faciliter les comprehension des variables.
+L'objectif étant de déterminer les impacts du Covid-19 sur les ménages, nous allons nous limiter aux variables clés qui nous conduiront dans cette analyse. 
+
+Nous allons donc choisir les variables 'interview__id' pour l'identité du ménage, 'event' pour  le type d'impact, 'event_occur' pour vérifier si l'impact a été observée ou non, 'nbr_pers'  pour connaitre le nbre  de personnes ayant subi l'impact, 'num_ordre' pour identifier l'individu du ménage qui a subi l'impact, ...
+
+### \color{red}{\textbf{Selection des variables}}
+
+```{r}
+# Nous allons à présent sélectionner uniquement les variables dont nous aurons besoin
+
+data14a <- select(section14a, interview__id, event, event_occur, nbr_pers, num_ordre, menage_member, sexe, age, relationship, solution, event_time)
+colnames(data14a) #Pour vérifier les modifications
+```
+
+### \color{red}{\textbf{Labelisation des variables}}
+
+```{r}
+
+#Labelisons à présent les variables de notre nouvelle base 
+
+data14a[c("interview__id", "event","event_occur", "nbr_pers",     "num_ordre", "menage_member", "sexe", "age", "relationship", "solution", "event_time")] <- to_factor(data14a[c("interview__id", "event","event_occur", "nbr_pers",     "num_ordre", "menage_member", "sexe", "age", "relationship", "solution", "event_time")])
+
+head(data14a) #Vérification du résultat
+
+```
+
+A présent que nous avons renommer et labéliser les variables dont nous auront besoin, nous allons supprimer les doublons contenus dans la base. 
+Il est important de noter qu'il est impossible d'avoir deux lignes identiques sans que ce ne soit une erreur. En effet, nous avons retenu la variable 'num_ordre' qui désigne le numéro d'ordre de l'individu ayant subi l'impact (la variable 'event') et permet donc de distinguer les doublons.
+
+### \color{red}{\textbf{Supression des doublons}}
+
+```{r}
+
+print(nrow(data14a) - nrow(distinct(data14a))) 
+data14a <- distinct(data14a)
+
+```
+
+Nous avons supprimer 61 doublons.
+A présent, nous allons visualiser les valeurs manquantes de notre base de données.
+
+### \color{red}{\textbf{Valeurs manquantes et imputations}}
+
+```{r}
+
+vis_miss(data14a) #Visualisation des valeurs manquantes
+
+```
+
+les variables les plus importantes comportent presque entièrement des valeurs manquantes (au delà de 80%). On ne peut donc pas les imputer ou les supprimer sans courir le risque de perdre de l'information. Cependant, dans notre analyse, nous nous interesserons beaucoup plus à ceux qui ont ont subi les impacts (ceux qui ont dit "oui" pour la variable "event_occur"). Mais avant cela, nous allons éliminer les valeurs manquantes de la variable 'event_occur' car elle n'en contient que 1% et il est compliqué de les imputer car de cette variable dépend plusieurs autres.
+
+```{r}
+
+data14a <- data14a %>% filter(!is.na(event_occur)) #suppression des valeurs manquantes
+
+any(is.na(data14a$event_occur)==TRUE) #Vérification
+
+```
+
+Maintenant que les valeurs manquantes de la variable 'event_occur' sont éliminées,  nous allons filtrer les données selon ceux qui ont subi un impact et visualiser de nouveau les valeurs manquantes.
+
+
+```{r}
+filter = filter(data14a, event_occur =="Oui")
+vis_miss(filter)
+```
+
+- les variables "age", "sexe" et "relationship" contiennent chacune plus de 90% de valeurs manquantes donc difficiles à exploiter. Nous allons donc les supprimer de la base.
+
+```{r}
+data14a <- select(data14a, -sexe, -age, -relationship)
+colnames(data14a)
+```
+
+
+
+Mis à part ces 3 variables, les autres variables comme "solution", "event_time", "event_occur", "nbr_pers"... contient peu ou pas de valeurs manquantes. 
+
+- Certaines valeurs manquantes sont explicables car cela dépend d'autres variables. Par exemple, si aucune solution n'a été trouvée, on ne peut pas donner le temps que l'impact a pris avant de disparaitre. Il y aura donc nécessairement une valeur manquante dans la variable "event_time". Nous allons donc traiter ces données en fonction de nos objectifs. 
+
+- La variable "num_order" fournit juste le numéro d'ordre de l'individu impacté. Elle permet donc de détecter les doublons au cas où deux personnes dans le même ménage auraient eu le même problème. Cependant, on peut pas imputer un numéro d'ordre car ce numéro est unique pour chaque individu. Enfin, la variable "menage_member" qui détermine si l'individu est toujours dans le ménage ne contient que très peu de valeurs manquantes (0,81%).
+
+## \color{red}{\textbf{2- Section 14b}}
+
+### \color{red}{\textbf{Importation de la section 14b}}
+
+```{r}
+#Importation de la base
+
+section14b <- read_dta("C:\\Users\\DELL\\Documents\\ENSAE\\Cours ISEP 2\\Semestre 2\\Programmation avec R\\Projet_R\\Bases_données\\s14b_me_SEN_2021.dta")
+
+
+#Visionnage de la base
+head(section14b)
+dim(section14b)
+```
+La base comporte 54670 lignes et 48 variables.Dans la suite, nous renommerons les variables et les traiter.
+
+### \color{red}{\textbf{Renommons les variables}}
+
+Tout comme la base précedente nous donnerons des noms à certaines variables si neccessaires pour faciliter les analyses et commentaires.
+
+```{r}
+
+new_name <- c(colnames(section14b)[1], colnames(section14b)[2],colnames(section14b)[3],
+colnames(section14b)[4], 'repondant', colnames(section14b)[6], 'event','event_occur', 'date', 'annee', 'revenu', 'avoirs', 'prod_agri', 'cheptel', 'stock_aliment', 'achat_aliment', 'epargne', 'aide_parent', 'aide_gouv', 'aide_ONG', 'marier_une_fille', 'change_habit', 'cheaper_food', 'extra_job', 'emploi_chomeur', 'emploi_enfant', 'descolarisation_enfant', 'migration', 'reduction_depenses', 'credit', 'vente_actif_agric', 'vente_bien_durable', 'vente_terrain', 'louer', 'vente_vivres', 'peche', 'ente_betail', 'confiage_enfant', 'activite_spirituel', 'culture_contre_saison', 'autre_statégie', 'aucune_strategie', 'strategie', 'resultat_interview','motif','langue','quiz_result','obs')
+isTRUE(length(new_name)==length(colnames(section14b)))
+
+```
+
+La vérification étant faite, on remplace les anciennes colonnes
+
+```{r}
+
+colnames(section14b) <- new_name  #Remplacement
+colnames(section14b) #vérification
+```
+
+Nous allons à présent sélectionner les variables qui seront les plus utiles. Nous avons plusieurs variables qui vont servir. Alors, plutot que de sélectionner, nous allons éliminer celles qui ne nous serviront pas. Il s'agira des variables 'grappe', 'vague', 'repondant', 'interview__key', 'resultat_interview', 'motif', 'langue', 'quiz_result', 'obs'.  
+
+```{r}
+data14b <- select(section14b, -grappe, -vague, -repondant, -interview__key, -resultat_interview, -motif, -langue, -quiz_result, -obs, -id_menage)
+colnames(data14b)
+```
+Nous vérifions la présence ou non des doublons.
+
+```{r}
+
+data <- distinct(data14b)  #Je suprime les doublons s'il y en a eventuellemment
+print(nrow(data14b)-nrow(data))
+
+
+```
+Nous notons donc la présence de 0 doublons.
+
+### \color{red}{\textbf{Labellisation les variables}}
+
+```{r}
+
+data14b[c("interview__id", "event", "event_occur", "date", "annee", "revenu", "avoirs", "prod_agri", "cheptel", "stock_aliment", "achat_aliment", "epargne", "aide_parent", "aide_gouv", "aide_ONG", "marier_une_fille", "change_habit", "cheaper_food", "extra_job", "emploi_chomeur", "emploi_enfant", "descolarisation_enfant", "migration", "reduction_depenses", "credit", "vente_actif_agric", "vente_bien_durable", "vente_terrain", "louer", "vente_vivres", "peche", "ente_betail", "confiage_enfant", "activite_spirituel", "culture_contre_saison", "autre_statégie", "aucune_strategie", "strategie")] <- to_factor(data14b[c("interview__id", "event", "event_occur", "date", "annee", "revenu", "avoirs", "prod_agri", "cheptel", "stock_aliment", "achat_aliment", "epargne", "aide_parent", "aide_gouv", "aide_ONG", "marier_une_fille", "change_habit", "cheaper_food", "extra_job", "emploi_chomeur", "emploi_enfant", "descolarisation_enfant", "migration", "reduction_depenses", "credit", "vente_actif_agric", "vente_bien_durable", "vente_terrain", "louer", "vente_vivres", "peche", "ente_betail", "confiage_enfant", "activite_spirituel", "culture_contre_saison", "autre_statégie", "aucune_strategie", "strategie")])
+
+head(data14b) #Vérification
+```
+
+Nous nous intéressons à présent au valeurs manquantes
+
+### \color{red}{\textbf{Valeurs manquantes et leur traitement}}
+
+```{r}
+vis_miss(data14b, warn_large_data = FALSE)
+```
+
+La base contient 86,5% de valeurs manquantes mais qu'on peut expliquer par le fait que certaines variables dépendent d'autres variables-clé comme pour la section 14a. L'une de ces variables-clé est la variable 'event_occur' qui détermine s'il y a eu survenue d'un impact ou non. Cette variable contient O,16% de valeurs manquantes, ce qui est négligeable. De plus, même si nous imputons cette variable, nous ne saurons compléter les autres variables qui en dépendent. Nous n'avons d'autres choix que de les éliminer.
+
+
+```{r}
+data14b <- data14b %>% filter(!is.na(event_occur))
+any(is.na(data14b$event_occur) == TRUE) #Vérification
+```
+
+
+```{r}
+
+vis_miss(filter(data14b, event_occur =='Oui'), warn_large_data= FALSE)
+
+```
+
+Nous disposons de moins de valeurs manquantes quand nous nous interessons uniquement à ceux qui ont subi un impact. Cependant, nous remarquons que 44,89% des valeurs des variables à partir de la variable 'revenu' sont des valeurs manquantes. Cela est normal. En effet, chaque ligne correspond à la réponse d'u ménage quant au fait qu'il a subi ou non un choc. Cependant, les conséquences des choccs et les stratégies utilisées ne dépendent pass du type de choc. Un même ménage utilise 3 sortes de stratégies indépendamment du type de choc et donc ces variables ne sont renseignées qu'une seule fois pour le même ménage. Le même ménage est itéré 22 fois sur les lignes car il y a  22 chocs. Cependant les réponses aux stratégies et aux conséquences des chocs ne sont itérées qu'une seule fois. C'est ce qui explique d'ailleurs qu'on ait les mêmes proportions de valeurs manquantes pour ces autres colonnes.
+Pour nos analyses, nous les supprimerons pour étudier les conséquences des chocs et les stratégies utilisées.
+
+
+
+# \color{red}{\textbf{II- Analyse}}
+
+## \color{red}{\textbf{1- Impacts socio-economique du covid sur les menages}}    
+
+### \color{red}{\textbf{1.1- Impacts sur le temps de travail}}  
+
+
+```{r,echo=FALSE}
+
+filter <- filter(data14a, event == "Réduit le temps de travail à cause du coronavirus")
+
+freq(filter$event_occur,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Il ressort que sur un echantillon de 2946 menages; 52,3% ont reduit leur temps travail contre 47,7% qui ont maintenu leur heure de travail.Ces resultats montrent deja l'impact de la covid sur le monde du travail.Ainsi poussons les analyses pour voir les repercusions de ces baisses d'heures de travail sur la vie des ménages.
+
+```{r,echo=FALSE}
+
+p = ggplot(filter) + geom_bar(aes(x = event_occur), fill = c("blue","red"))
+
+p <- p + labs(title = "Proportion des ménages selon ceux qui ont ", subtitle = "réduit leur temps de travail ou non",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+
+```{r}
+
+filter <- filter(data14a, event == "Réduit le temps de travail à cause du coronavirus", event_occur == "Oui") # Je sélectionne ceux qui ont réduit leur temps de travail
+
+freq(filter$solution,valid = FALSE, total = TRUE, sort= "dec")
+
+```
+
+Les analyses ci-dessus montrent que plus de la moitié des menages ont connu une reduction d'heure de travail du au fait de la COVID ou des mesures preventives addoptées par les gouvernants.Parmi ceux ayant connu la reduction des heurs de travail,85.5% ont affirmé avoir trouvé une solution pour pallier à ce problème.Environ 14% n'ont pas touvé une alternative à leur ptoblème.Faut-il se demander combien de temps fallait attendre pour trouver une solution à la reduction d'heures de travail?
+
+```{r}
+filter <- filter(data14a, event == "Réduit le temps de travail à cause du coronavirus", event_occur == "Oui", solution =="Solution trouvée" )
+freq(filter$event_time,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Le tableau montre que seulement 4,2% des  menages ont pu trouvé une solution pour pallier à la reduction d'heures de travail dans 1 mois à compter du jour de cette baisse contre 5,5% des menages ayant trouvé une solution après 1 ans.Cependant ces resultats montrent une disparité dans les solutions trouvés dans le temps.En effet; 84,5% ont pu pallier à la baisse d'heure de travail avant 6 mois contre 15,5% au delà de 6 mois.Mais ces resultats sont loin de refleter la situation des menages dues au COVID. Pour cela, nous jeterons un regard sur les activités economiques avec la COVID.
+
+
+### \textcolor{red}{1.2- Impacts sur les produits agricoles}
+
+La pandemie de COVID a eu des effets desastreux sur l'activité economique mondiale eparticulièrement le Sénégal.L'agriculture étant le moteur du secteur economique sénegalais(elle contribue à hauteur de 9,4% du PIB national et de 62,8% de la valeur ajoutée selon ANSD EN 2020) n'a pas epargné par l'impact de cette pandemie.
+
+```{r}
+filter <- filter(data14a, event == "Subi la mévente de produits de l'agriculture du fait du coronavirus")
+
+freq(filter$event_occur,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+L'observation du tableau révèle que la vente des produits agricoles n'a pas été trop affecté par la pandemie.En effet seulement 7,2% declarent avoir faire des mevente du fait de du COVID-19.Les 92,8% afffirment ne pas connaitre des meventes. De ces chiffres,on peut pretendre que l'activité agricole a pu resister aux effets de cette maladie,a -t-il été le cas?
+
+```{r}
+p = ggplot(filter) + geom_bar(aes(x = event_occur), fill = c("blue","red"))
+
+p <- p + labs(title = "Proportion des ménages selon ceux qui ont subi la mévente des produits de l'agriculture",
+              caption = "Data source: EHCVM 2021")
+p
+```
+
+
+```{r}
+filter <- filter(data14a, event =="Subi la mévente de produits de l'agriculture du fait du coronavirus" , event_occur == "Oui") # Je sélectionne ceux qui ont subi la mévente des produits de l'agriculture
+
+freq(filter$solution,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Ces resultats montrent que parmi ceux qui ont connu des meventes de leur produits agricoles,77,1% ont trouvé une solution palliative contre 22,9%.Ces resultats sont sastifaisantes mais pour combien de temps ont ils pris pour trouver la solution.
+
+```{r}
+filter <- filter(data14a, event == "Subi la mévente de produits de l'agriculture du fait du coronavirus", event_occur == "Oui", solution =="Solution trouvée" )
+freq(filter$event_time,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Il ressort que seulement 10,3% ont passé au moins une année pour pallier à leur mevente contre 89,07%.Aussi,faut-il noter qu'environ 43% ont pu resoudre leur mevente en moins d'un trimestre.
+
+### \color{red}{\textbf{1.4- Impacts sur le monde des affaires}} 
+
+La pandemie de covid-19 n'a pas epargné le monde des affaires surtout les voyages à l'étranger.En effet,la fermeture des frontières terrestres,aériennes ont ralenti les voyages de certains hommes d'affaires Sénégalais.
+
+```{r}
+filter <- filter(data14a, event == "Renoncer à un voyage d'affaires hors du pays du fait du coronavirus")
+freq(filter$event_occur,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Il ressort que seulement 2,4% seulement ont renoncer à leur voyage d'affaire contre 97,6%.Ces resultats montrent que beaucoup de menages n'ont pas pour activité principale 'les affaires' si on sait que la fermeture des frontières signifiaent la cessation des voyages.
+
+
+```{r}
+
+p = ggplot(filter) + geom_bar(aes(x = event_occur), fill = c("blue","red"))
+
+p <- p + labs(title = "Proportion des ménages selon ceux qui ont",
+              subtitle = "renoncé à un voyage d'affaires hors du pays",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+Le graphique ci-dessus illustre l'impact de la covid sur le monde des affaires.
+
+```{r}
+filter <- filter(data14a, event == "Renoncer à un voyage d'affaires hors du pays du fait du coronavirus", event_occur == "Oui") # Je sélectionne ceux qui ont renoncé à un voyage d'affaire à l'étranger
+
+freq(filter$solution,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Parmi les hommes d'affaires ayant renoncer à des voyages d'affaires 62% d'entre eux ont trouver une solution palliative contre 38% n'ayant pas trouvé de solution.
+
+
+```{r}
+filter <- filter(data14a, event == "Renoncer à un voyage d'affaires hors du pays du fait du coronavirus", event_occur == "Oui", solution =="Solution trouvée")
+
+freq(filter$event_time,valid = FALSE, total = TRUE, sort= "dec")
+```
+
+Il convient de noter que peu d'entre ceux qui ont trouvé une solution,ont pris peu de temps car c'est seulement  5,6% qui ont pris au plus 2 mois contre 47% ayant pris au moins 6 mois avant d'en trouver une solution.
+
+### \color{red}{\textbf{1.5- Analyse comparative}}  
+
+```{r,echo=FALSE}
+filter1 = filter(data14a, event =="Eté malade de Coronavirus") 
+freq(filter1$event_occur,
+     valid = TRUE, 
+     total = TRUE, 
+     sort = "dec")
+```
+
+Il convient de noter que 98,4% des menages n'ont pas connu des cas de covid contre 1,1% de menages n'a pas connu des cas.Sur l'echantillon d'echantillon d'etude 0,5% de menages se sont abstenus de repondre à cette question.Ces resultats viennent une fois de plus confirmer le faible taux de contaminés dans le pays.
+
+```{r}
+
+tab<-table(data14a$event, data14a$event_occur)
+addmargins(prop.table(addmargins(tab,1),1),2)*100
+
+```
+
+Ce tableau resume l'impact socio-économique de la pandemie  au sein des ménages.Il ressort que principalemment les activités ayant été les plus touché sont(la reduction d'heures de ttravail 52%),les visites de familles à l'interieur du pays(33% ayant renoncés).Cependant la mevente de produits agricoles due au covid n'a presque pas été constaté.De meme on note une très faible proportion des cas de covid(environ 1% de cas).
+
+```{r}
+
+p = ggplot(data14a) + geom_bar(aes(y = event, fill = event_occur))
+
+p <- p + labs(title = "Proportion des ménages",
+              subtitle = "selon chaque type d'impact",
+        caption = "Data source: EHCVM 2021")
+p
+
+```
+
+Ce graphique illustre une fois de plus les analyses precedentes.
+
+## \color{red}{\textbf{2- Problèmes rencontrés par les menages: Section 4b}}   
+
+Pour nos analyses, nous ferons des analyses ppar région et par milieu de residence donc nous allons importer certaines informations depuis la section 0.
+
+```{r}
+
+#Importation de la section0
+
+section0 <- read_dta("C:\\Users\\DELL\\Documents\\ENSAE\\Cours ISEP 2\\Semestre 2\\Programmation avec R\\Projet_R\\Bases_données\\s00_me_SEN_2021.dta")
+
+# Sélection des variables utiles
+data0 <- select(section0, interview__id, s00q01, s00q04)
+
+#Renommons les variables 
+
+new_name <- c("interview__id", "region", "residence")
+colnames(data0) <- new_name  #Remplacement 
+
+#Labelisation des variables
+
+data0[c("interview__id", "region", "residence")] <- to_factor(data0[c("interview__id", "region", "residence")])
+
+#visualisation de la base
+head(data0)
+
+```
+
+```{r}
+# Fusion des bases suivant la clé 'interview__id'
+fusion<- merge(data14b,data0, by = 'interview__id')
+head(fusion)
+
+```
+
+### \color{red}{\textbf{2.1- Problèmes rencontrées par région}} 
+
+Nous allons constituer une base constituée uniquement des ménages ayant subi au moins un impact sans qu'il y ait répétition des ménages sur la ligne.
+
+```{r}
+
+choc <- filter(fusion, event_occur == "Oui") #Nous constituons une base formée uniquement de ceux qui ont subi au moins un choc
+head(choc)
+
+```
+```{r}
+#Nous allons constituer la base contenant unique les colonnes 'interview__id', 'event_occur', 'region' et 'residence'
+data1 <- select(choc, interview__id, event_occur, region, residence)
+head(data1)
+
+```
+
+la base data1 contient uniquement les ménages ayant subi au moins un impact. Nous allons donc supprimer les doublons pour avoir les ménages uniques
+
+```{r}
+data1 <- distinct(data1)
+dim(data1)
+
+```
+
+Nous allons à présent déterminer le pourcentage des problèmes par région et milieu de résidence.
+
+```{r}
+freq(data1$region, valid = TRUE, total = TRUE)
+```
+
+En considerant les problèmes rencontrés par les population selon la region,les ménages vivants à Dakar represententent la forte roportion(12.3%) ainsi suit les regions de Diourbel(8,7%),de KAOLACK(8,2%).Les menages des regions FATICK et ZIGUINCHOR présentent les faibles proportions de problèmers rencontrés avec des taux respectifs de 3.9% et 5.4%.
+
+```{r}
+data1.sub <- data1 %>% filter(!is.na(region))
+p = ggplot(data1.sub) + geom_bar(aes(y = region), fill = 'blue')
+
+p <- p + labs(title = ": Proportion des ménages affectés par un problème selon le milieu de résidence",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+Nous allons voir les problèmes rencontrés par milieu de résidence
+
+```{r}
+freq(data1$residence, valid = TRUE, total = TRUE)
+```
+
+Par milieu de residence,les menages vivant en milieu urbain ont rencontré plus de probèmes(51.9%) contre ceux vivant en milieu rural.Toute chose qui vient confirmer les difficultés et la vie des menages dans les centres urbains.
+
+
+
+```{r}
+data1.sub <- data1 %>% filter(!is.na(residence))
+p = ggplot(data1.sub) + geom_bar(aes(x = residence), fill = c('blue', 'red'))
+
+p <- p + labs(title = ": Proportion des ménages affectés par un problème selon le milieu de résidence",
+              caption = "Data source: EHCVM 2021")
+p
+```
+
+
+### \color{red}{\textbf{2.2- Consequences des chocs sur le revenu}}  
+
+Pour l'analyse des chocs et des conséquences nous allons supprimer les valeurs manquantes détectées dans la base lors de l'apurement
+
+```{r}
+fusion <- fusion %>% filter(!is.na(revenu))
+vis_miss(fusion)
+```
+
+Il sera question d'evaluer l'impact des chocs sur le revenu des menages.
+
+```{r}
+
+filtre <- filter(fusion, event_occur =="Oui") #Je sélectionne uniquement ceux qui ont subi un impact
+freq(filtre$revenu, valid = TRUE, total = TRUE)
+```
+
+Les conséquences des chocs sur le revenu des ménages ne sont pas que négatives pour tous les ménages. Bien que 70.1 % des ménages ont vu leur revenu baisser suite à un choc, 22.1 % des ménages affirment que le choc n’a pas eu d’effet sur leur revenu. Et mieux, 3.1% des ménages ont enregistré une augmentation de leur revenu suite à la survenue du problème.
+
+```{r}
+
+p = ggplot(filtre) + geom_bar(aes(x = revenu), fill = 'blue', na.rm = FALSE)
+
+p <- p + labs(title = "Proportion dess ménages selon l'effet du choc sur les revenus",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+#### \color{red}{\textbf{Conséquences sur la diminution du revenu par milieu de résidence}} 
+
+```{r}
+filtre2 <- filter(fusion, event_occur =="Oui", revenu == "Diminué") #Je sélectionne uniquement ceux qui ont subi un impact
+
+freq(filtre2$residence, valid = TRUE, total = TRUE)
+
+```
+
+En considerant,le choc de diminution de revenu, le milieu rural a été le plus exposé avec 60.7% des ménages ayant subi une baisse de leur revenu suite à un choc.
+
+```{r}
+filtre2.sub <- filtre2 %>% filter(!is.na(residence))
+p = ggplot(filtre2.sub) + geom_bar(aes(x = residence), fill = 'blue', na.rm = FALSE)
+
+p <- p + labs(title = "Proportion des ménages qui ont connu une baisse du revenu selon le milieu de résidence",
+              caption = "Data source: EHCVM 2021")
+p
+```
+
+#### \color{red}{\textbf{Conséquences sur la diminution du revenu par région}}  
+
+```{r}
+filtre2 <- filter(fusion, event_occur =="Oui", revenu == "Diminué") #Je sélectionne uniquement ceux qui ont subi un impact
+
+freq(filtre2$region, valid = TRUE, total = TRUE)
+```
+
+En analysant par région la diminution de revenu suite à un choc, les regions les plus touchés sont Diourbel(10.7%) et la region de KOLDA.Par contre les regions de FATIK et de ZIGUINCHOR ont été affecté tres faible par ce problème.De manière générale, on note une variation peu grande de ce problème en fonction des régions.
+
+```{r}
+filtre2.sub <- filtre2 %>% filter(!is.na(region))
+p = ggplot(filtre2.sub) + geom_bar(aes(y = region), fill = 'blue', na.rm = FALSE)
+
+p <- p + labs(title = "Proportion des ménages qui ont connu une baisse du revenu selon le milieu de résidence",
+              caption = "Data source: EHCVM 2021")
+p
+```
+
+### \color{red}{\textbf{2.3- Consequences sur les avoirs des ménages}}    
+
+
+Tout comme la partie precedente,la pandemie n'a pas épargné les avoirs des menages.
+
+```{r,echo=FALSE}
+
+freq(filtre$avoirs, valid = TRUE, total = TRUE)
+
+```
+
+Au plan national; 68,8% des ménages affirment que la survenue du choc a entrainé une baisse de leurs avoirs du ménage et 23,1% des ménages ont vu leurs avoirs restés inchangés. Seulement 1.7% des ménages a enregistré une augmentation de leur avoir.
+
+
+```{r}
+
+p = ggplot(filtre) + geom_bar(aes(x = avoirs), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon l’effet du choc sur les avoirs",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+### \color{red}{\textbf{2.4- Conséquences sur la production agricole}}
+
+```{r}
+
+freq(filtre$prod_agri, valid = TRUE, total = TRUE)
+
+```
+
+Les chocs survenus au cours des 12 mois précédant l’enquête ont différemment affectés la production agricole  des ménages. Au plan national, 4 ménages sur 10 ont enregistré une baisse de leur production, 20%ont vu leur production inchangée et seulement 2.3% des ménages ont connu une augmentation de leur production.
+
+```{r}
+
+filtre.sub <- filtre %>% filter(!is.na(prod_agri))
+p = ggplot(filtre.sub) + geom_bar(aes(x = prod_agri), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon l’effet du choc sur la production agricole",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+
+### \color{red}{\textbf{2.5- Conséquences sur l'effectif du cheptel}}
+
+Par cheptel, on ettend l'ensemble des animaux dont dispose un menages.Le Sénégal etant un pays fortement agricole dont un pays ou l'élevage est fortement pratiqué.Donc nous nous i nterressons à l'evaluation de l'impact du covid sur ce secteur d'activité.
+
+```{r}
+
+freq(filtre$cheptel, valid = TRUE, total = TRUE)
+
+```
+
+Les resultats revèlent que environ 30% des menages ont observés une diminution de leur cheptel contre 1% d'entre eux ayant observé une hausse de l'effectifs de leur cheptel.Environ 29% des menages n'ont pas observés l'effet de la pandemie sur l'effectif de leur betail.Aussi,un fait majeur est que parmi les repondants 40.6% ne pratiquent pas l'élevage.
+
+```{r}
+
+filtre.sub <- filtre %>% filter(!is.na(cheptel))
+p = ggplot(filtre.sub) + geom_bar(aes(x = cheptel), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon l’effet du choc sur l'effectif du cheptel",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+### \color{red}{\textbf{2.6- Conséquences sur le stock alimentaire}}    
+
+La diminution de la production agricole au sein de plusieurs ménages entrainera des impacts sur le stock alimentaire de ces derniers.
+
+```{r}
+
+freq(filtre$stock_aliment, valid = TRUE, total = TRUE)
+```
+
+Au plan national, la survenue du choc négatif au cours des 12 derniers mois ayant précédé l’enquête a entrainé la baisse du stock des produits alimentaires chez 55% des ménages, 23.5% des ménages ont vu le niveau de leurs stocks de produits resté inchangé.
+
+```{r}
+
+filtre.sub <- filtre %>% filter(!is.na(stock_aliment))
+p = ggplot(filtre.sub) + geom_bar(aes(x = stock_aliment), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon l’effet du choc sur le stock de produits alimentaires",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+### \color{red}{\textbf{2.7- Conséquences sur les achats des produits alimentaires}}    
+
+```{r}
+
+freq(filtre$achat_aliment, valid = TRUE, total = TRUE)
+```
+
+Suite à la survenue d’un choc, 9.1% des ménages ayant été touchés par les chocs ont vu leurs achats de produits alimentaires augmenter tandis que 58.4% ont vu leurs achats diminuer. Le choc n’a pas eu d’effet sur les achats de 24.8% de ménages.
+
+```{r}
+
+filtre.sub <- filtre %>% filter(!is.na(achat_aliment))
+p = ggplot(filtre.sub) + geom_bar(aes(x = achat_aliment), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon l’effet du choc sur l'achat des produits alimentaires",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+### \color{red}{\textbf{2.8- stratégie de survie}}
+
+####  \color{red}{\textbf{Selon la première stratégie la plus importante}}
+
+Nous allons sortir les proportions des ménages selon la première et la deuxième stratégie la plus importante.
+
+```{r}
+
+values <- c() #Nous allons construire un vecteur qui contient le nombre de ménages qui ont opté pour la modalité 1 pour chaque stratégie 
+
+values = append(values, nrow(filter(fusion, epargne ==1)))
+values = append(values, nrow(filter(fusion, aide_parent ==1)))
+values = append(values, nrow(filter(fusion, aide_gouv ==1)))
+values = append(values, nrow(filter(fusion, aide_ONG ==1)))
+values = append(values, nrow(filter(fusion, marier_une_fille ==1)))
+values = append(values, nrow(filter(fusion, change_habit ==1)))
+values = append(values, nrow(filter(fusion, cheaper_food ==1)))
+values = append(values, nrow(filter(fusion, extra_job ==1)))
+values = append(values, nrow(filter(fusion, emploi_chomeur ==1)))
+values = append(values, nrow(filter(fusion, emploi_enfant ==1)))
+values = append(values, nrow(filter(fusion, descolarisation_enfant ==1)))
+values = append(values, nrow(filter(fusion, migration ==1)))
+values = append(values, nrow(filter(fusion, reduction_depenses ==1)))
+values = append(values, nrow(filter(fusion, credit ==1)))
+values = append(values, nrow(filter(fusion, vente_actif_agric ==1)))
+values = append(values,  nrow(filter(fusion, vente_bien_durable ==1)))
+values = append(values,  nrow(filter(fusion, vente_terrain ==1)))
+values = append(values,  nrow(filter(fusion, louer ==1)))
+values = append(values,  nrow(filter(fusion, vente_vivres ==1)))
+values = append(values,  nrow(filter(fusion, peche ==1)))
+values = append(values,  nrow(filter(fusion, ente_betail ==1)))
+values = append(values,  nrow(filter(fusion, confiage_enfant ==1)))
+values = append(values,  nrow(filter(fusion, activite_spirituel ==1)))
+values = append(values,  nrow(filter(fusion, culture_contre_saison ==1)))
+values = append(values,  nrow(filter(fusion, autre_statégie ==1)))
+values = append(values,  nrow(filter(fusion, aucune_strategie ==1)))
+
+
+values <- values*100/length(unique(fusion$interview__id)) #Je calcule les pourcentages
+
+length(values)
+
+
+```
+
+
+```{r}
+group <- colnames(data14b)[12:37] 
+mydata <- data.frame(strategie = group, n= values)
+                     
+mydata  #Je construis un dataframe pour y mettre les informations
+
+```
+
+Concernant la première  strategie de survie face aux chocs, 17.45% des menages ont opté pour recourrir à leur épargne tandis 10.96% ont été aidé par leur parent.De meme pour cette première strategire aucun menage n'a fait travaillé son enfant commme employé(0%).Comme première strategie adoptée,on note un faible taux de menage ayant opté pour les extra_job(0.6%) ou emploi_chomeur(0.12%).
+
+
+```{r}
+
+p = ggplot(mydata) + geom_col(aes(y = strategie, x =n ), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon la première stratégie",
+              subtitle = "adoptée pour faire face au problème",
+              caption = "Data source: EHCVM 2021")
+p
+
+```
+
+#### \color{red}{\textbf{Selon la deuxième stratégie la plus importante}}
+
+```{r}
+values <- c() #Nous allons construire un vecteur qui contient le nombre de ménages qui ont opté pour la modalité 2 pour chaque stratégie 
+
+values = append(values, nrow(filter(fusion, epargne ==2)))
+values = append(values, nrow(filter(fusion, aide_parent ==2)))
+values = append(values, nrow(filter(fusion, aide_gouv ==2)))
+values = append(values, nrow(filter(fusion, aide_ONG ==2)))
+values = append(values, nrow(filter(fusion, marier_une_fille ==2)))
+values = append(values, nrow(filter(fusion, change_habit ==2)))
+values = append(values, nrow(filter(fusion, cheaper_food ==2)))
+values = append(values, nrow(filter(fusion, extra_job ==2)))
+values = append(values, nrow(filter(fusion, emploi_chomeur ==2)))
+values = append(values, nrow(filter(fusion, emploi_enfant ==2)))
+values = append(values, nrow(filter(fusion, descolarisation_enfant ==2)))
+values = append(values, nrow(filter(fusion, migration ==2)))
+values = append(values, nrow(filter(fusion, reduction_depenses ==2)))
+values = append(values, nrow(filter(fusion, credit ==2)))
+values = append(values, nrow(filter(fusion, vente_actif_agric ==2)))
+values = append(values,  nrow(filter(fusion, vente_bien_durable ==2)))
+values = append(values,  nrow(filter(fusion, vente_terrain ==2)))
+values = append(values,  nrow(filter(fusion, louer ==2)))
+values = append(values,  nrow(filter(fusion, vente_vivres ==2)))
+values = append(values,  nrow(filter(fusion, peche ==2)))
+values = append(values,  nrow(filter(fusion, ente_betail ==2)))
+values = append(values,  nrow(filter(fusion, confiage_enfant ==2)))
+values = append(values,  nrow(filter(fusion, activite_spirituel ==2)))
+values = append(values,  nrow(filter(fusion, culture_contre_saison ==2)))
+values = append(values,  nrow(filter(fusion, autre_statégie ==2)))
+values = append(values,  nrow(filter(fusion, aucune_strategie ==2)))
+
+
+values <- values*100/length(unique(fusion$interview__id)) #Je calcule les pourcentages
+
+length(values)
+```
+
+```{r}
+group <- colnames(data14b)[12:37] 
+mydata <- data.frame(strategie = group, n= values)
+                     
+mydata  #Je construis un dataframe pour y mettre les informations
+```
+
+De meme comme deuxième strategie de survie,on note une faible disparité entre les strategies.En effet,seulement le recours aux nourritures moins chères ont été la solution plus frequentée.Comme la première,aucun menage n'a fait travaillé son enfant à des buts lucratifs ou marier une fille pour pallier à leur situation.Les strattegies comme emploi_chommeurs,extra_travail,aide_ONG,aide_gouvernement ont été faiblement adoptés comme strategies.
+
+```{r}
+p = ggplot(mydata) + geom_col(aes(y = strategie, x =n ), fill = 'blue')
+
+p <- p + labs(title = "Proportion des ménages selon la deuxième stratégie",
+              subtitle = "adoptée pour faire face au problème",
+              caption = "Data source: EHCVM 2021")
+p
+```
+
+
+# \color{red}{\textbf{CONCLUSION}}
+
+Au Sénégal, 52% des menages ont observée un diminution des heures de travail du fait de la pandemie.Aussi la pandemie a affectée d'autres activités comme sur les visites familiales à l'interne(32%),les transferts d'argents à l'interne(14%),les transferts d'argent de l'exterieur(10)...Aussi dans la plupart de ces problèmes occasionnés par le coronavirus,la mojorité des ménages ont trouvé une solution palliative au plus tard un trimestre.
+5,7% des ménages ont été négativement affectes par un problème lors des six derniers mois. De façon générale,tous les ménages (zones rurales ont été négativement  affectes par un choc négatif . Les problèmes qui ont le plus affecte les ménages sont la baisse duprix des produits agicoles, les maladies graves ou accident d’un membre du ménage, les prix élevées des produits alimentaires, les prix élèves des inputs agricoles et les taux élèves des maladies des animaux. Ces différents chocs ont eu des conséquences néfastes sur les revenus des ménages, les avoirs, la production, les stocks et les achats de produits alimentaires. Cependant, les ménages ont adopte des stratégies pour atténuer les effets des différents chocs. Notamment, les stratégies comme l’utilisation de l’épargne, la vente de bétail, l’aide des parents ou des amis ainsi que les changements dans les habitudes de consommation ont été les options les plus utilisent par les ménages pour atténuer les effets des différents chocs.
+
+
+
+
+
+
