@@ -7,6 +7,7 @@ library(expss)
 library(visdat)
 library(dplyr)
 library(questionr)
+library(labelled)
 
 #                          Apurement
 
@@ -53,7 +54,7 @@ filter = filter(data14a, event_occur ==1)
 vis_miss(filter)
 data14a <- select(data14a, -sexe, -age, -relationship)
 colnames(data14a)
-
+write.table(data14a, 'section 14A_apuré.dta', row.names = FALSE)
 
 # Section 14b
 
@@ -89,8 +90,9 @@ data14b <- data14b %>% filter(!is.na(event_occur))
 any(is.na(data14b$event_occur) == TRUE) #Vérification
 
 vis_miss(filter(data14b, event_occur =='Oui'), warn_large_data= FALSE)
+data14b <- data14b %>% filter(!is.na(revenu))
+write.table(data14b, 'section 14B_apuré.dta', row.names = FALSE)
 
-#           Analyse
 
 
 

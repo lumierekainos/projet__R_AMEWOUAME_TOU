@@ -1,0 +1,265 @@
+---
+output:
+  pdf_document:
+    keep_tex: true
+    fig_caption: true
+    latex_engine: xelatex
+    highlight: pygments
+    toc: yes
+    toc_depth: 5
+fontsize : 12pt
+lineheight : 1.5
+title:
+ $\fontfamily{century}\textbf{Agence Nationale de Statistique et de la Démographie}$ 
+ \begin{center}\textbf{ANSD}\end{center}
+ **------------------------------------------------------------** \newline
+   $\fontfamily{century}\textbf{Ecole Nationale de la Statistique et de l'Analyse Economique}$
+  \begin{center}\textbf{ENSAE Pierre NDIAYE}\end{center}
+  **------------------------------------------------------------** \newline
+  
+  $\fontfamily{century}\selectfont\color{red}\textbf{Apurement des bases}$ \newline
+  
+ **------------------------------------------------------------**
+  
+  \begin{flushleft}
+   Rédigé par :\newline
+   Elisée AMEWOUAME et Brahima TOU\newline
+   Elèves ingénieurs statisticiens \newline
+   économistes
+   \end{flushleft}
+   
+   \begin{flushright}
+   Sous la supervision de :\newline
+   Mouhamadou Hady DIALLO\newline
+   Ingénieur statisticien, Data Scientist\newline
+   \end{flushright}
+date: 
+  28 Juin 2022
+  \newpage
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+#  \color{red}{\textbf{I- Apurement des bases}}
+
+Dans cette partie, nous allons apurer la base en vue de la préparer aux divers analyses.Elle consistera principalement à visualiser la baser,à renommer certaines variables pour qu'elles soient comprehensibles,à detecter les valeurs manquantes et les imputer si neccessaires.
+
+## \color{red}{\textbf{1- Section 14a}}
+
+Nous importons la base section14a qui traite entre autres de l'impact socio-économique du covid-19 sur les ménages.
+
+```{r}
+# Installation des bibliothèques utiles
+
+library(haven)
+library(tidyverse)
+library(nycflights13)
+library(expss)
+library(visdat)
+library(dplyr)
+library(questionr)
+library(labelled)
+
+#Importation de la base
+
+section14a <- read_dta("C:\\Users\\DELL\\Documents\\ENSAE\\Cours ISEP 2\\Semestre 2\\Programmation avec R\\Projet_R\\Bases_données\\s14a_me_SEN_2021.dta")
+
+
+#Visionnage de la base
+head(section14a)
+dim(section14a)
+
+```
+
+La base section14a  contient 23523 observations pour 22 variables que nous allons renommer avant d'en choisir les plus utiles.
+
+###  \color{red}{\textbf{Renommons les variables}}
+
+```{r}
+new_name <- c(colnames(section14a)[1], colnames(section14a)[2],colnames(section14a)[3],
+              colnames(section14a)[4], 'repondant', colnames(section14a)[6], 'event',
+              'event_occur', 'nbr_pers', 'solution', 'event_time', colnames(section14a)[12],
+              'menage_member', 'num_ordre', 'sexe', 'age', 'relationship',
+              'resultat_interview', 'motif','langue','quiz_result', 'obs')
+
+isTRUE(length(new_name)==length(colnames(section14a))) #Vérifie si les longueurs sont les mêmes
+
+colnames(section14a) <- new_name
+colnames(section14a)
+```
+
+Ainsi,nous avons renommer toutes les variables de la base afin de faciliter les comprehension des variables.
+L'objectif étant de déterminer les impacts du Covid-19 sur les ménages, nous allons nous limiter aux variables clés qui nous conduiront dans cette analyse. 
+
+Nous allons donc choisir les variables 'interview__id' pour l'identité du ménage, 'event' pour  le type d'impact, 'event_occur' pour vérifier si l'impact a été observée ou non, 'nbr_pers'  pour connaitre le nbre  de personnes ayant subi l'impact, 'num_ordre' pour identifier l'individu du ménage qui a subi l'impact, ...
+
+### \color{red}{\textbf{Selection des variables}}
+
+```{r}
+# Nous allons à présent sélectionner uniquement les variables dont nous aurons besoin
+
+data14a <- select(section14a, interview__id, event, event_occur, nbr_pers, num_ordre, menage_member, sexe, age, relationship, solution, event_time)
+colnames(data14a) #Pour vérifier les modifications
+```
+
+### \color{red}{\textbf{Labelisation des variables}}
+
+```{r}
+
+#Labelisons à présent les variables de notre nouvelle base 
+
+data14a[c("interview__id", "event","event_occur", "nbr_pers",     "num_ordre", "menage_member", "sexe", "age", "relationship", "solution", "event_time")] <- to_factor(data14a[c("interview__id", "event","event_occur", "nbr_pers",     "num_ordre", "menage_member", "sexe", "age", "relationship", "solution", "event_time")])
+
+head(data14a) #Vérification du résultat
+
+```
+
+A présent que nous avons renommer et labéliser les variables dont nous auront besoin, nous allons supprimer les doublons contenus dans la base. 
+Il est important de noter qu'il est impossible d'avoir deux lignes identiques sans que ce ne soit une erreur. En effet, nous avons retenu la variable 'num_ordre' qui désigne le numéro d'ordre de l'individu ayant subi l'impact (la variable 'event') et permet donc de distinguer les doublons.
+
+### \color{red}{\textbf{Supression des doublons}}
+
+```{r}
+
+print(nrow(data14a) - nrow(distinct(data14a))) 
+data14a <- distinct(data14a)
+
+```
+
+Nous avons supprimer 61 doublons.
+A présent, nous allons visualiser les valeurs manquantes de notre base de données.
+
+### \color{red}{\textbf{Valeurs manquantes et imputations}}
+
+```{r}
+
+vis_miss(data14a) #Visualisation des valeurs manquantes
+
+```
+
+les variables les plus importantes comportent presque entièrement des valeurs manquantes (au delà de 80%). On ne peut donc pas les imputer ou les supprimer sans courir le risque de perdre de l'information. Cependant, dans notre analyse, nous nous interesserons beaucoup plus à ceux qui ont ont subi les impacts (ceux qui ont dit "oui" pour la variable "event_occur"). Mais avant cela, nous allons éliminer les valeurs manquantes de la variable 'event_occur' car elle n'en contient que 1% et il est compliqué de les imputer car de cette variable dépend plusieurs autres.
+
+```{r}
+
+data14a <- data14a %>% filter(!is.na(event_occur)) #suppression des valeurs manquantes
+
+any(is.na(data14a$event_occur)==TRUE) #Vérification
+
+```
+
+Maintenant que les valeurs manquantes de la variable 'event_occur' sont éliminées,  nous allons filtrer les données selon ceux qui ont subi un impact et visualiser de nouveau les valeurs manquantes.
+
+
+```{r}
+filter = filter(data14a, event_occur =="Oui")
+vis_miss(filter)
+```
+
+- les variables "age", "sexe" et "relationship" contiennent chacune plus de 90% de valeurs manquantes donc difficiles à exploiter. Nous allons donc les supprimer de la base.
+
+```{r}
+data14a <- select(data14a, -sexe, -age, -relationship)
+colnames(data14a)
+```
+
+
+
+Mis à part ces 3 variables, les autres variables comme "solution", "event_time", "event_occur", "nbr_pers"... contient peu ou pas de valeurs manquantes. 
+
+- Certaines valeurs manquantes sont explicables car cela dépend d'autres variables. Par exemple, si aucune solution n'a été trouvée, on ne peut pas donner le temps que l'impact a pris avant de disparaitre. Il y aura donc nécessairement une valeur manquante dans la variable "event_time". Nous allons donc traiter ces données en fonction de nos objectifs. 
+
+- La variable "num_order" fournit juste le numéro d'ordre de l'individu impacté. Elle permet donc de détecter les doublons au cas où deux personnes dans le même ménage auraient eu le même problème. Cependant, on peut pas imputer un numéro d'ordre car ce numéro est unique pour chaque individu. Enfin, la variable "menage_member" qui détermine si l'individu est toujours dans le ménage ne contient que très peu de valeurs manquantes (0,81%).
+
+## \color{red}{\textbf{2- Section 14b}}
+
+### \color{red}{\textbf{Importation de la section 14b}}
+
+```{r}
+#Importation de la base
+
+section14b <- read_dta("C:\\Users\\DELL\\Documents\\ENSAE\\Cours ISEP 2\\Semestre 2\\Programmation avec R\\Projet_R\\Bases_données\\s14b_me_SEN_2021.dta")
+
+
+#Visionnage de la base
+head(section14b)
+dim(section14b)
+```
+La base comporte 54670 lignes et 48 variables.Dans la suite, nous renommerons les variables et les traiter.
+
+### \color{red}{\textbf{Renommons les variables}}
+
+Tout comme la base précedente nous donnerons des noms à certaines variables si neccessaires pour faciliter les analyses et commentaires.
+
+```{r}
+
+new_name <- c(colnames(section14b)[1], colnames(section14b)[2],colnames(section14b)[3],
+colnames(section14b)[4], 'repondant', colnames(section14b)[6], 'event','event_occur', 'date', 'annee', 'revenu', 'avoirs', 'prod_agri', 'cheptel', 'stock_aliment', 'achat_aliment', 'epargne', 'aide_parent', 'aide_gouv', 'aide_ONG', 'marier_une_fille', 'change_habit', 'cheaper_food', 'extra_job', 'emploi_chomeur', 'emploi_enfant', 'descolarisation_enfant', 'migration', 'reduction_depenses', 'credit', 'vente_actif_agric', 'vente_bien_durable', 'vente_terrain', 'louer', 'vente_vivres', 'peche', 'ente_betail', 'confiage_enfant', 'activite_spirituel', 'culture_contre_saison', 'autre_statégie', 'aucune_strategie', 'strategie', 'resultat_interview','motif','langue','quiz_result','obs')
+isTRUE(length(new_name)==length(colnames(section14b)))
+
+```
+
+La vérification étant faite, on remplace les anciennes colonnes
+
+```{r}
+
+colnames(section14b) <- new_name  #Remplacement
+colnames(section14b) #vérification
+```
+
+Nous allons à présent sélectionner les variables qui seront les plus utiles. Nous avons plusieurs variables qui vont servir. Alors, plutot que de sélectionner, nous allons éliminer celles qui ne nous serviront pas. Il s'agira des variables 'grappe', 'vague', 'repondant', 'interview__key', 'resultat_interview', 'motif', 'langue', 'quiz_result', 'obs'.  
+
+```{r}
+data14b <- select(section14b, -grappe, -vague, -repondant, -interview__key, -resultat_interview, -motif, -langue, -quiz_result, -obs, -id_menage)
+colnames(data14b)
+```
+Nous vérifions la présence ou non des doublons.
+
+```{r}
+
+data <- distinct(data14b)  #Je suprime les doublons s'il y en a eventuellemment
+print(nrow(data14b)-nrow(data))
+
+
+```
+Nous notons donc la présence de 0 doublons.
+
+### \color{red}{\textbf{Labellisation les variables}}
+
+```{r}
+
+data14b[c("interview__id", "event", "event_occur", "date", "annee", "revenu", "avoirs", "prod_agri", "cheptel", "stock_aliment", "achat_aliment", "epargne", "aide_parent", "aide_gouv", "aide_ONG", "marier_une_fille", "change_habit", "cheaper_food", "extra_job", "emploi_chomeur", "emploi_enfant", "descolarisation_enfant", "migration", "reduction_depenses", "credit", "vente_actif_agric", "vente_bien_durable", "vente_terrain", "louer", "vente_vivres", "peche", "ente_betail", "confiage_enfant", "activite_spirituel", "culture_contre_saison", "autre_statégie", "aucune_strategie", "strategie")] <- to_factor(data14b[c("interview__id", "event", "event_occur", "date", "annee", "revenu", "avoirs", "prod_agri", "cheptel", "stock_aliment", "achat_aliment", "epargne", "aide_parent", "aide_gouv", "aide_ONG", "marier_une_fille", "change_habit", "cheaper_food", "extra_job", "emploi_chomeur", "emploi_enfant", "descolarisation_enfant", "migration", "reduction_depenses", "credit", "vente_actif_agric", "vente_bien_durable", "vente_terrain", "louer", "vente_vivres", "peche", "ente_betail", "confiage_enfant", "activite_spirituel", "culture_contre_saison", "autre_statégie", "aucune_strategie", "strategie")])
+
+head(data14b) #Vérification
+```
+
+Nous nous intéressons à présent au valeurs manquantes
+
+### \color{red}{\textbf{Valeurs manquantes et leur traitement}}
+
+```{r}
+vis_miss(data14b, warn_large_data = FALSE)
+```
+
+La base contient 86,5% de valeurs manquantes mais qu'on peut expliquer par le fait que certaines variables dépendent d'autres variables-clé comme pour la section 14a. L'une de ces variables-clé est la variable 'event_occur' qui détermine s'il y a eu survenue d'un impact ou non. Cette variable contient O,16% de valeurs manquantes, ce qui est négligeable. De plus, même si nous imputons cette variable, nous ne saurons compléter les autres variables qui en dépendent. Nous n'avons d'autres choix que de les éliminer.
+
+
+```{r}
+data14b <- data14b %>% filter(!is.na(event_occur))
+any(is.na(data14b$event_occur) == TRUE) #Vérification
+```
+
+
+```{r}
+
+vis_miss(filter(data14b, event_occur =='Oui'), warn_large_data= FALSE)
+
+```
+
+Nous disposons de moins de valeurs manquantes quand nous nous interessons uniquement à ceux qui ont subi un impact. Cependant, nous remarquons que 44,89% des valeurs des variables à partir de la variable 'revenu' sont des valeurs manquantes. Cela est normal. En effet, chaque ligne correspond à la réponse d'u ménage quant au fait qu'il a subi ou non un choc. Cependant, les conséquences des choccs et les stratégies utilisées ne dépendent pass du type de choc. Un même ménage utilise 3 sortes de stratégies indépendamment du type de choc et donc ces variables ne sont renseignées qu'une seule fois pour le même ménage. Le même ménage est itéré 22 fois sur les lignes car il y a  22 chocs. Cependant les réponses aux stratégies et aux conséquences des chocs ne sont itérées qu'une seule fois. C'est ce qui explique d'ailleurs qu'on ait les mêmes proportions de valeurs manquantes pour ces autres colonnes.
+Pour nos analyses, nous les supprimerons pour étudier les conséquences des chocs et les stratégies utilisées.
